@@ -1,0 +1,10 @@
+# MaxMind GeoIP API Server - Developed by acidvegas in Python (https://git.acid.vegas/maxmind-server)
+# maxmind-server/.gitignore
+
+.env
+__pycache__
+logs/*
+*.log
+.log
+assets/*
+venv/*

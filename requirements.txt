@@ -1,0 +1,9 @@
+# MaxMind GeoIP API Server - Developed by acidvegas in Python (https://git.acid.vegas/maxmind-server)
+# maxmind-server/requirements.txt
+
+aiofiles
+aiohttp
+fastapi
+geoip2
+python-dotenv
+uvicorn 
