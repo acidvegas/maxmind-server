@@ -2,26 +2,20 @@
 # MaxMind GeoIP API Server - Developed by acidvegas in Python (https://git.acid.vegas/maxmind-server)
 # maxmind-server/setup.sh
 
-# Create virtual environment if it doesn't exist
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
-fi
+# Load environment variables
+[ -f .env ] && source .env || { echo "Error: .env file not found"; exit 1; }
 
-# Activate virtual environment
-source venv/bin/activate
+# Set xtrace, exit on error, & verbose mode (after loading environment variables)
+set -xev
 
-# Install requirements
-pip install -r requirements.txt
+# Create the container storage directory
+mkdir -p /opt/container-storage/maxmind
 
-# Create necessary directories
-mkdir -p assets
-mkdir -p logs
+# Remove existing docker container if it exists
+docker rm -f maxmind-server 2>/dev/null || true
 
-# Copy service file
-cp assets/maxmind.service /etc/systemd/system/
+# Build the Docker image
+docker build -t maxmind-server .
 
-# Reload systemd
-systemctl daemon-reload
-
-# Enable and restart service
-systemctl enable maxmind && systemctl restart maxmind
+# Run the Docker container
+docker run -d --name maxmind-server --restart unless-stopped -v /opt/container-storage/maxmind:/app/assets -p 127.0.0.1:8000:8000 -e MAXMIND_LICENSE_KEY=${MAXMIND_LICENSE_KEY} maxmind-server

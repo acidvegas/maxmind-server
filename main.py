@@ -10,6 +10,7 @@ import shutil
 import tarfile
 
 from contextlib import asynccontextmanager
+from pathlib    import Path
 
 try:
     import aiohttp
@@ -32,7 +33,27 @@ try:
 except ImportError:
     raise ImportError('missing geoip2 library (pip install geoip2)')
 
-from config import HOST, PORT, DB_PATH, UPDATE_INTERVAL, MAXMIND_LICENSE_KEY, BASE_DIR
+# Load environment variables if .env file exists (otherwise set by Docker -e flags)
+if os.path.exists('.env'):
+	try:
+		from dotenv import load_dotenv
+	except ImportError:
+		raise ImportError('missing python-dotenv library (pip install python-dotenv)')
+	else:
+		load_dotenv()
+
+# MaxMind configuration (sensitive data from .env)
+MAXMIND_LICENSE_KEY = os.getenv('MAXMIND_LICENSE_KEY')
+
+# Paths
+BASE_DIR = Path(__file__).parent
+DB_PATH  = BASE_DIR / 'assets/GeoLite2-City.mmdb'
+
+# Update interval (in seconds)
+UPDATE_INTERVAL = 86400 # 24 hours
+
+# Create required directories
+os.makedirs(BASE_DIR / 'assets', exist_ok=True)
 
 
 @asynccontextmanager
@@ -223,4 +244,4 @@ if __name__ == '__main__':
     # Configure logging
     logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s', level = logging.INFO)
     
-    uvicorn.run(app, host=HOST, port=PORT) 
+    uvicorn.run(app, host='127.0.0.1', port=8000) 

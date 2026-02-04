@@ -2,9 +2,4 @@
 # maxmind-server/.gitignore
 
 .env
-__pycache__
-logs/*
-*.log
-.log
 assets/*
-venv/*
