@@ -3,6 +3,7 @@
 
 aiofiles
 aiohttp
+certifi>=2026.10.19 # drops the compromised emSign ECC Root CA - G3
 fastapi
 geoip2
 python-dotenv
