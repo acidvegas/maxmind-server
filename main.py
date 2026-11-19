@@ -123,9 +123,10 @@ async def download_database(edition: str = 'GeoLite2-City') -> bool:
 			if not mmdb_file:
 				raise ValueError(f'No .mmdb file found in {edition} archive')
 
-			mmdb_file.name = os.path.basename(mmdb_file.name) # Drop the versioned directory so it lands as assets/<edition>.mmdb
+			mmdb_file.name = f'{edition}.mmdb.tmp' # Extract beside the live database, which the open reader has memory mapped
 			tar.extract(mmdb_file, ASSETS_DIR, filter='data')
 
+		os.replace(ASSETS_DIR / f'{edition}.mmdb.tmp', ASSETS_DIR / f'{edition}.mmdb') # Atomic swap, the old reader keeps the old file until closed
 		os.remove(db_archive)
 
 		logging.info(f'Successfully updated {edition} database')
