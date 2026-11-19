@@ -3,7 +3,7 @@
 # maxmind-server/setup.sh
 
 # Load environment variables
-[ -f .env ] && source .env || { echo "Error: .env file not found"; exit 1; }
+[ -f .env ] && { set -a; source .env; set +a; } || { echo "Error: .env file not found"; exit 1; }
 
 # Set xtrace, exit on error, & verbose mode (after loading environment variables)
 set -xev
@@ -19,4 +19,4 @@ docker rm -f maxmind-server 2>/dev/null || true
 docker build -t maxmind-server .
 
 # Run the Docker container
-docker run -d --name maxmind-server --restart unless-stopped --user 10001:10001 -v /opt/container-storage/maxmind:/app/assets -p 127.0.0.1:8000:8000 -e MAXMIND_LICENSE_KEY=${MAXMIND_LICENSE_KEY} maxmind-server
+docker run -d --name maxmind-server --restart unless-stopped --user 10001:10001 -v /opt/container-storage/maxmind:/app/assets -p 127.0.0.1:8000:8000 -e MAXMIND_LICENSE_KEY maxmind-server
