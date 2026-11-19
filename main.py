@@ -27,6 +27,7 @@ except ImportError:
 
 try:
 	from geoip2.database import Reader
+	from geoip2.errors   import AddressNotFoundError
 except ImportError:
 	raise ImportError('missing geoip2 library (pip install geoip2)')
 
@@ -217,6 +218,8 @@ async def lookup_ip(ip_address: str) -> dict:
 
 	try:
 		response = readers['city'].city(ip_address)
+	except AddressNotFoundError:
+		raise HTTPException(status_code=404, detail='IP address not found')
 	except Exception as e:
 		raise HTTPException(status_code=400, detail=str(e))
 
